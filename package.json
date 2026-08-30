@@ -6,8 +6,12 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
     "lint": "tsc -b",
+    "test": "node --experimental-strip-types --test tests/finance.test.js",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "dependencies": {
     "lucide-react": "^1.31.0",

@@ -1,98 +1,137 @@
-# Deployment Guide
+# Deployment Guide — MoneyWise Myanmar
 
-This is a static React + TypeScript + Vite website. It needs no API key, backend or database.
+This is a static React 19 + TypeScript + Vite web application. It requires no backend server, database, or API keys.
 
-## 1. Upload to GitHub
+---
 
-Create an empty GitHub repository, extract this package, open a terminal inside the project and run:
+## 1. Push to GitHub
+
+If creating a new repository or pushing updates:
 
 ```bash
 git init
 git add .
-git commit -m "Initial Financial Literacy website"
+git commit -m "feat: complete MoneyWise Myanmar static application"
 git branch -M main
 git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
 git push -u origin main
 ```
 
-Replace `YOUR-USERNAME` and `YOUR-REPOSITORY` with your real values. Do not commit passwords, tokens or `.env` secrets.
+Ensure `package-lock.json`, `.gitignore`, and `.github/workflows/deploy-pages.yml` are committed.
 
-## 2. Cloudflare Pages — Recommended
+---
 
-1. Open Cloudflare Dashboard.
-2. Go to **Workers & Pages**.
-3. Select **Create application → Pages → Import an existing Git repository**.
-4. Select the GitHub repository.
-5. Use these settings:
+## 2. Cloudflare Pages (Recommended)
+
+1. Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/).
+2. Navigate to **Workers & Pages**.
+3. Select **Create application → Pages → Connect to Git**.
+4. Select your GitHub repository.
+5. Configure the build settings:
 
 | Setting | Value |
 |---|---|
-| Framework preset | React (Vite) or Vite |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Root directory | `/` |
+| **Framework preset** | `React (Vite)` or `Vite` |
+| **Build command** | `npm run build` |
+| **Build output directory** | `dist` |
+| **Root directory** | `/` |
+| **Node.js Version** | `22` |
+| **Environment variables** | *None required* |
 
-6. Select **Save and Deploy**.
+6. Click **Save and Deploy**.
+7. Cloudflare Pages will assign a URL like `https://moneywise-myanmar.pages.dev`.
 
-No environment variables are required.
-
-For direct command-line deployment after building:
+### Direct CLI Deployment with Wrangler:
 
 ```bash
+npm ci
 npm run build
-npx wrangler pages deploy dist
+npx wrangler pages deploy dist --project-name=moneywise-myanmar
 ```
 
-## 3. Vercel
+---
 
-1. Import the GitHub repository into Vercel.
-2. Vercel should detect Vite automatically.
-3. Confirm Build Command `npm run build` and Output Directory `dist`.
-4. Deploy.
+## 3. GitHub Pages (Automated via GitHub Actions)
 
-The included `vercel.json` supplies these settings.
+The repository includes a ready-to-use workflow at `.github/workflows/deploy-pages.yml`.
 
-## 4. Netlify
+To enable:
+1. Push code to the `main` branch.
+2. In your GitHub repository, go to **Settings → Pages**.
+3. Under **Build and deployment → Source**, select **GitHub Actions**.
+4. GitHub Actions will automatically run `npm ci`, execute `npm run lint`, build `dist/`, and deploy the site.
+5. The Vite config uses `base: "./"` which supports both custom domains and project subpaths (e.g., `https://username.github.io/repository-name/`).
 
-1. Select **Add new site → Import an existing project**.
-2. Connect the GitHub repository.
-3. Use Build Command `npm run build`.
-4. Use Publish Directory `dist`.
-5. Deploy.
+---
 
-The included `netlify.toml` supplies these settings.
+## 4. Vercel
 
-## 5. GitHub Pages
+1. Import your GitHub repository into [Vercel](https://vercel.com).
+2. Vercel automatically detects the Vite framework.
+3. Confirm settings:
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+   - **Install Command:** `npm ci`
+4. Click **Deploy**.
 
-The included GitHub Actions workflow builds and publishes the website.
+The repository includes `vercel.json` for zero-configuration deployments.
 
-1. Push the source to the `main` branch.
-2. Open repository **Settings → Pages**.
-3. Under Source, select **GitHub Actions**.
-4. Open the Actions tab and wait for **Deploy to GitHub Pages** to finish.
+---
 
-The Vite `base: "./"` setting supports repository subpaths.
+## 5. Netlify
 
-## 6. Docker, VPS or Other Cloud Infrastructure
+1. Go to [Netlify](https://app.netlify.com) and click **Add new site → Import an existing project**.
+2. Connect your GitHub repository.
+3. Confirm settings:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+4. Click **Deploy site**.
 
-Build and run the included Docker image:
+The repository includes `netlify.toml` for pre-configured deployments.
+
+---
+
+## 6. Docker & Container Platforms
+
+The included multi-stage `Dockerfile` uses `node:22-alpine` to build the app with `npm ci` and serves static files via `nginx:1.27-alpine`.
+
+### Build & Run locally:
 
 ```bash
+# Build Docker image
 docker build -t moneywise-myanmar .
-docker run -p 8080:80 moneywise-myanmar
+
+# Run container on port 8080
+docker run -d -p 8080:80 --name moneywise-app moneywise-myanmar
 ```
 
 Open `http://localhost:8080`.
 
-The same container can run on AWS ECS, Azure Container Apps, Google Cloud Run, DigitalOcean, Render or any platform that supports Docker containers.
+### Deploying the container:
+The built Docker container can be deployed to:
+- Google Cloud Run
+- AWS ECS / Fargate
+- Azure Container Apps
+- DigitalOcean App Platform
+- Render / Fly.io / Railway
 
-## 7. AWS S3 and CloudFront
+---
 
-1. Run `npm ci && npm run build`.
-2. Upload the contents of `dist/` to an S3 bucket.
-3. Configure the bucket or CloudFront distribution to use `index.html` as the default root object.
-4. Use CloudFront for HTTPS, caching and a custom domain.
+## 7. AWS S3 + CloudFront
 
-## Updating the deployed website
+1. Run:
+   ```bash
+   npm ci
+   npm run build
+   ```
+2. Sync the `dist/` directory to an AWS S3 bucket:
+   ```bash
+   aws s3 sync dist/ s3://your-bucket-name --delete
+   ```
+3. Configure S3 static website hosting or connect CloudFront distribution with `index.html` as the Default Root Object.
 
-Edit the source, test locally with `npm run dev`, then push to GitHub. Cloudflare Pages, Vercel and Netlify automatically build and publish the new version.
+---
+
+## Continuous Updates & Maintenance
+
+Whenever you push commits to your `main` branch, connected platforms (Cloudflare Pages, GitHub Pages, Vercel, Netlify) will automatically rebuild using `npm ci` and publish the updated application.
