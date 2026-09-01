@@ -12,7 +12,6 @@ import { DecisionLab } from "./components/DecisionLab";
 import { ProfitCashExample } from "./components/ProfitCashExample";
 import { RealWorldCase } from "./components/RealWorldCase";
 import { BeginnerGlossary } from "./components/BeginnerGlossary";
-import { EducatorToolkit } from "./components/EducatorToolkit";
 import { Footer } from "./components/Footer";
 
 export default function App() {
@@ -65,7 +64,6 @@ export default function App() {
 
       <RealWorldCase />
       <BeginnerGlossary />
-      <EducatorToolkit />
       <Footer />
     </main>
   );

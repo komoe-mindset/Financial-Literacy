@@ -20,13 +20,16 @@
 
 ## Key Features
 
+- **15-Minute Self-Guided Learning Mode:** ၅ ဆင့်ပါ interactive self-guided လေ့လာမှုခရီးစဉ် (နားလည် → တွက်ချက် → ပြင်ဆင် → ဆုံးဖြတ် → လက်တွေ့လုပ်)
+- **Goal-Based Personalization:** ငွေကြေးရည်မှန်းချက် ၄ မျိုး (Money Flow, Emergency Fund, Debt Decision, Business Money) အလိုက် သီးသန့် အကြံပြုချက်များ
 - **Interactive Eight-Step Workflow:** အဆင့်လိုက် ရှင်းလင်းချက်နှင့် Reflection မေးခွန်းများ
 - **Monthly Budget Calculator:** ကျန်ငွေ၊ စုငွေနှုန်း၊ Zero-based Budget နှင့် ပညာပေး Validation စနစ်
 - **Emergency Fund Target:** မဖြစ်မနေအသုံးစရိတ်အပေါ် အခြေခံ၍ ၁ လ၊ ၃ လ၊ ၆ လစာ ရည်မှန်းချက် တွက်ချက်မှု
 - **Real-World Decision Lab:** ဖုန်းအသစ်ဝယ်ယူမှု Scenario နှင့် ရေတို/ရေရှည် အကျိုးဆက် သုံးသပ်ချက်
 - **Profit vs Cash Business Case:** စာရင်းအရ Profit နှင့် လက်ထဲကျန်ရှိသော Cash မတူညီပုံကို ရှင်းလင်းစွာ ခွဲခြားဖော်ပြခြင်း
 - **AI Freelancer Financial Case Study:** ကိုအောင်၏ လက်တွေ့ ငွေကြေးခွဲဝေမှုနှင့် ၉ လတာ Emergency Fund စီမံကိန်း
-- **Educator Toolkit:** သင်ကြားသူများအတွက် အသင့်သုံး ၆၀ မိနစ်စာ Class Flow အစီအစဉ်
+- **30-Day Action Commitment & Completion:** လက်တွေ့အကောင်အထည်ဖော်မည့် အလေ့အကျင့်ရွေးချယ်ပြီး Summary စာမျက်နှာ ရယူနိုင်ခြင်း
+- **Beginner Finance Glossary:** အသုံးများသော Finance အင်္ဂလိပ်စာလုံးများကို မြန်မာလို ရိုးရှင်းစွာ ရှင်းပြထားသော အဘိဓာန်တို
 - **Accessible & Responsive:** Screen reader အထောက်အကူပြု semantic HTML၊ မြန်မာစာ font rendering နှင့် mobile-friendly layout
 - **No API Key / Zero Backend:** Browser ပေါ်တွင်သာ လုံးဝအလုပ်လုပ်ပြီး ကိုယ်ရေးအချက်အလက် မသိမ်းဆည်းပါ
 

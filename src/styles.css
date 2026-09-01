@@ -3433,35 +3433,6 @@ input:focus-visible {
   color: var(--teal);
 }
 
-.teacher-section {
-  max-width: 1240px;
-  display: block;
-  padding: 96px clamp(24px, 6vw, 96px);
-  margin: auto;
-}
-
-.teacher-intro {
-  text-align: center;
-  max-width: 760px;
-  margin: 0 auto 40px;
-}
-
-.teacher-intro h2 {
-  margin: 10px 0 16px;
-  font-size: clamp(30px, 4vw, 48px);
-  line-height: 1.35;
-  letter-spacing: -0.04em;
-}
-
-.teacher-intro > p:not(.eyebrow) {
-  color: var(--soft);
-  font-size: 15px;
-}
-
-.teacher-intro .eyebrow {
-  justify-content: center;
-}
-
 .takeaway {
   display: flex;
   justify-content: center;
@@ -3638,8 +3609,7 @@ footer .brand small {
   .learning-lab,
   .what-you-learn-section,
   .guided-learning-section,
-  .glossary-section,
-  .teacher-section {
+  .glossary-section {
     padding: 60px 18px;
   }
   .section-heading {
@@ -3726,10 +3696,6 @@ footer .brand small {
   .workflow-guided-strip {
     grid-template-columns: repeat(2, 1fr);
   }
-  .lesson-card-summary {
-    grid-template-columns: 60px 1fr 30px;
-    padding: 14px 16px;
-  }
   .takeaway {
     flex-direction: column;
     align-items: center;
@@ -3754,25 +3720,16 @@ footer .brand small {
 }
 
 /* ==========================================================================
-   Print Styles for Classroom Worksheets & PDF Export
+   Print Styles
    ========================================================================== */
 @media print {
-  /* Hide non-printable elements */
   .site-header,
-  .hero,
-  .what-you-learn-section,
-  .guided-learning-section,
-  .intro-section,
-  .workflow-section,
-  .learning-lab,
-  .case-section,
-  .glossary-section,
-  .takeaway,
-  footer,
-  .educator-header-actions,
-  .curriculum-mode-tabs,
-  .worksheet-print-footer,
-  .expand-indicator {
+  .mobile-menu-toggle,
+  .mobile-menu-backdrop,
+  .change-path-btn,
+  .reset-btn,
+  .step-stepper-btn,
+  footer {
     display: none !important;
   }
 
@@ -3783,47 +3740,22 @@ footer .brand small {
     line-height: 1.4 !important;
   }
 
-  .teacher-section {
-    padding: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .teacher-intro {
-    text-align: left !important;
-    margin-bottom: 20px !important;
-  }
-
-  .teacher-intro h2 {
-    font-size: 18pt !important;
-    color: #000 !important;
-  }
-
-  .detailed-lesson-list {
-    display: block !important;
-  }
-
-  .detailed-lesson-card {
-    border: 1px solid #ccc !important;
+  .guided-body,
+  .case-card,
+  .lab-panel {
     box-shadow: none !important;
+    border: 1px solid #ccc !important;
     page-break-inside: avoid !important;
-    margin-bottom: 16px !important;
   }
+}
 
-  .lesson-card-details {
-    display: flex !important;
-    padding: 12px !important;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-
-  .detail-block {
-    background: #fff !important;
-    border: 1px solid #eee !important;
-    padding: 8px !important;
-  }
-
-  .answer-guidance-box {
-    display: block !important;
-    border: 1px solid #ddd !important;
-    background: #fafafa !important;
+  * {
+    transition: none !important;
+    animation: none !important;
   }
 }
 
