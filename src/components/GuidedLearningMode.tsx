@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Clock,
   ArrowRight,
@@ -24,12 +24,19 @@ import {
   loadLearningProgress,
   saveLearningProgress,
   resetLearningProgress,
+  loadBudgetDataLocal,
+  saveBudgetDataLocal,
+  loadQuizResultsLocal,
+  saveQuizResultLocal,
+  subscribeToUserProgress,
+  type UserProgressData,
 } from "../utils/learningStorage";
 import { calculateBudget } from "../utils/finance";
 import { formatMMK } from "../utils/format";
 import { LearningCheckCard } from "./LearningCheckCard";
 import { ResetConfirmDialog } from "./ResetConfirmDialog";
 import { TermTooltip } from "./TermTooltip";
+import { useAuth } from "../AuthContext";
 import type {
   LearningPathId,
   ThirtyDayActionId,
@@ -38,6 +45,7 @@ import type {
 } from "../types";
 
 export function GuidedLearningMode() {
+  const { user } = useAuth();
   const [progress, setProgress] = useState<LearningProgress>(() => loadLearningProgress());
   const [showPathSelector, setShowPathSelector] = useState(() => progress.completedSteps.length === 0 && progress.currentStep === 1 && !progress.selectedAction);
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
@@ -47,24 +55,63 @@ export function GuidedLearningMode() {
   const [selectedWorkflowStep, setSelectedWorkflowStep] = useState(0);
 
   // Step 2 calculator state
+  const initialBudget = loadBudgetDataLocal();
   const [guidedInputs, setGuidedInputs] = useState<BudgetInputs>({
-    income: 1_000_000,
-    essential: 550_000,
-    flexible: 150_000,
-    debt: 100_000,
-    saving: 200_000,
+    income: initialBudget.income,
+    essential: initialBudget.essential,
+    flexible: initialBudget.flexible,
+    debt: initialBudget.debt,
+    saving: initialBudget.saving,
   });
 
   // Step 3 emergency fund months
-  const [emergencyMonths, setEmergencyMonths] = useState<number>(3);
+  const [emergencyMonths, setEmergencyMonths] = useState<number>(initialBudget.emergencyMonths || 3);
+
+  // Quiz results state
+  const [quizResults, setQuizResults] = useState<Record<string, string>>(() => loadQuizResultsLocal());
 
   // Step 4 decision option
   const [selectedDecision, setSelectedDecision] = useState<"debt" | "save" | "simple">("debt");
 
-  // Sync progress changes to localStorage
+  // Subscribe to real-time cloud updates if signed in
   useEffect(() => {
-    saveLearningProgress(progress);
-  }, [progress]);
+    if (!user?.uid) return;
+
+    const unsubscribe = subscribeToUserProgress(user.uid, (cloudData: UserProgressData) => {
+      if (cloudData.progress) {
+        setProgress(cloudData.progress);
+      }
+      if (cloudData.budgetData) {
+        setGuidedInputs({
+          income: cloudData.budgetData.income,
+          essential: cloudData.budgetData.essential,
+          flexible: cloudData.budgetData.flexible,
+          debt: cloudData.budgetData.debt,
+          saving: cloudData.budgetData.saving,
+        });
+        if (cloudData.budgetData.emergencyMonths) {
+          setEmergencyMonths(cloudData.budgetData.emergencyMonths);
+        }
+      }
+      if (cloudData.quizResults) {
+        setQuizResults(cloudData.quizResults);
+      }
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [user?.uid]);
+
+  // Sync progress changes to localStorage and Firestore
+  useEffect(() => {
+    saveLearningProgress(progress, user?.uid);
+  }, [progress, user?.uid]);
+
+  // Sync budget changes
+  useEffect(() => {
+    saveBudgetDataLocal({ ...guidedInputs, emergencyMonths }, user?.uid);
+  }, [guidedInputs, emergencyMonths, user?.uid]);
 
   const handleSelectPath = (pathId: LearningPathId) => {
     setProgress((prev) => ({
@@ -109,9 +156,23 @@ export function GuidedLearningMode() {
     }));
   };
 
+  const handleAnswerQuiz = useCallback((stepKey: string, optionId: string) => {
+    setQuizResults((prev) => ({ ...prev, [stepKey]: optionId }));
+    saveQuizResultLocal(stepKey, optionId, user?.uid);
+  }, [user?.uid]);
+
   const handleConfirmReset = () => {
-    const fresh = resetLearningProgress();
+    const fresh = resetLearningProgress(user?.uid);
     setProgress(fresh);
+    setQuizResults({});
+    setGuidedInputs({
+      income: 1_000_000,
+      essential: 550_000,
+      flexible: 150_000,
+      debt: 100_000,
+      saving: 200_000,
+    });
+    setEmergencyMonths(3);
     setShowPathSelector(true);
     setIsResetDialogOpen(false);
   };
@@ -361,7 +422,11 @@ export function GuidedLearningMode() {
             })()}
 
             {/* Learning Check 1 */}
-            <LearningCheckCard checkData={learningCheckQuestions[1]} />
+            <LearningCheckCard
+              checkData={learningCheckQuestions[1]}
+              initialOptionId={quizResults["step_1"]}
+              onOptionSelect={(optId) => handleAnswerQuiz("step_1", optId)}
+            />
 
             <div className="guided-step-footer">
               <button
@@ -558,7 +623,11 @@ export function GuidedLearningMode() {
             </div>
 
             {/* Learning Check 2 */}
-            <LearningCheckCard checkData={learningCheckQuestions[2]} />
+            <LearningCheckCard
+              checkData={learningCheckQuestions[2]}
+              initialOptionId={quizResults["step_2"]}
+              onOptionSelect={(optId) => handleAnswerQuiz("step_2", optId)}
+            />
 
             <div className="guided-step-footer">
               <button
@@ -637,7 +706,11 @@ export function GuidedLearningMode() {
             </div>
 
             {/* Learning Check 3 */}
-            <LearningCheckCard checkData={learningCheckQuestions[3]} />
+            <LearningCheckCard
+              checkData={learningCheckQuestions[3]}
+              initialOptionId={quizResults["step_3"]}
+              onOptionSelect={(optId) => handleAnswerQuiz("step_3", optId)}
+            />
 
             <div className="guided-step-footer">
               <button
@@ -736,7 +809,11 @@ export function GuidedLearningMode() {
             </div>
 
             {/* Learning Check 4 */}
-            <LearningCheckCard checkData={learningCheckQuestions[4]} />
+            <LearningCheckCard
+              checkData={learningCheckQuestions[4]}
+              initialOptionId={quizResults["step_4"]}
+              onOptionSelect={(optId) => handleAnswerQuiz("step_4", optId)}
+            />
 
             <div className="guided-step-footer">
               <button
@@ -859,8 +936,8 @@ export function GuidedLearningMode() {
                     )}
                   </button>
 
-                  <a href="#teach" className="explore-more-btn">
-                    <span>ဆရာ/ဆရာမများအတွက် သင်ကြားရေး အစီအစဉ် ကြည့်မည်</span>
+                  <a href="#workflow" className="explore-more-btn">
+                    <span>အဆင့် ၈ ဆင့် Money Workflow ဆက်လက်လေ့လာမည်</span>
                     <ExternalLink size={16} aria-hidden="true" />
                   </a>
                 </div>
@@ -868,7 +945,11 @@ export function GuidedLearningMode() {
             )}
 
             {/* Learning Check 5 */}
-            <LearningCheckCard checkData={learningCheckQuestions[5]} />
+            <LearningCheckCard
+              checkData={learningCheckQuestions[5]}
+              initialOptionId={quizResults["step_5"]}
+              onOptionSelect={(optId) => handleAnswerQuiz("step_5", optId)}
+            />
 
             <div className="guided-step-footer">
               <button

@@ -1,21 +1,38 @@
-import { useState } from "react";
-import { HelpCircle, CheckCircle2, XCircle, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { HelpCircle, CheckCircle2, XCircle, ChevronDown, Sparkles } from "lucide-react";
 import type { LearningCheckQuestion } from "../types";
 
 interface LearningCheckCardProps {
   checkData: LearningCheckQuestion;
+  initialOptionId?: string | null;
   onAnswered?: (isCorrect: boolean) => void;
+  onOptionSelect?: (optionId: string, isCorrect: boolean) => void;
 }
 
-export function LearningCheckCard({ checkData, onAnswered }: LearningCheckCardProps) {
-  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
-  const [showAnswer, setShowAnswer] = useState(false);
+export function LearningCheckCard({
+  checkData,
+  initialOptionId,
+  onAnswered,
+  onOptionSelect,
+}: LearningCheckCardProps) {
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(initialOptionId || null);
+  const [showAnswer, setShowAnswer] = useState(Boolean(initialOptionId));
+
+  useEffect(() => {
+    if (initialOptionId) {
+      setSelectedOptionId(initialOptionId);
+      setShowAnswer(true);
+    }
+  }, [initialOptionId]);
 
   const handleSelect = (optionId: string, isCorrect: boolean) => {
     setSelectedOptionId(optionId);
     setShowAnswer(true);
     if (onAnswered) {
       onAnswered(isCorrect);
+    }
+    if (onOptionSelect) {
+      onOptionSelect(optionId, isCorrect);
     }
   };
 

@@ -1,0 +1,102 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with display name, auth provider state, and learning progress",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique Firebase Auth UID of the user"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User chosen nickname or Google display name"
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address if authenticated via Google"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "User avatar URL"
+        },
+        "isAnonymous": {
+          "type": "boolean",
+          "description": "Whether the user is currently an anonymous guest"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp when the user profile was created"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "ISO timestamp of the last local or cloud modification"
+        },
+        "progress": {
+          "type": "object",
+          "description": "Learning steps progress"
+        },
+        "quizResults": {
+          "type": "object",
+          "description": "Map of question IDs to selected answer option IDs"
+        },
+        "budgetData": {
+          "type": "object",
+          "description": "Saved monthly budget inputs and emergency fund months"
+        }
+      },
+      "required": ["uid", "isAnonymous", "lastUpdated"]
+    },
+    "UserProgress": {
+      "title": "UserProgress",
+      "description": "User self-guided learning progress, budget calculations, and quiz checks",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The unique Firebase Auth UID of the user"
+        },
+        "currentStep": {
+          "type": "number",
+          "description": "The current learning step number (1 to 5)"
+        },
+        "completedSteps": {
+          "type": "array",
+          "description": "List of completed step numbers"
+        },
+        "selectedPath": {
+          "type": "string",
+          "description": "The selected learning path or goal"
+        },
+        "selectedAction": {
+          "type": "string",
+          "description": "The selected 30-day action ID"
+        },
+        "quizResults": {
+          "type": "object",
+          "description": "Map of question IDs to selected answer option IDs"
+        },
+        "budgetData": {
+          "type": "object",
+          "description": "Saved monthly budget inputs and emergency fund months"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "ISO timestamp of the last local or cloud modification"
+        }
+      },
+      "required": ["userId", "currentStep", "lastUpdated"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/progress/{documentId}": {
+      "schema": "UserProgress",
+      "description": "Collection storing learning progress and state for each user"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Direct user profile document storing nickname, anonymous status, and synced state"
+    }
+  }
+}

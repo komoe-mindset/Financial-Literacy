@@ -10,17 +10,68 @@ interface ResetConfirmDialogProps {
 export function ResetConfirmDialog({ isOpen, onConfirm, onCancel }: ResetConfirmDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      cancelButtonRef.current?.focus();
+      // Store the currently active element to restore focus on close
+      previousActiveElementRef.current = document.activeElement as HTMLElement | null;
+
+      // Focus the safe cancel action when opening
+      const timer = window.setTimeout(() => {
+        cancelButtonRef.current?.focus();
+      }, 50);
+
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
+          e.preventDefault();
           onCancel();
+          return;
+        }
+
+        if (e.key === "Tab") {
+          if (!dialogRef.current) return;
+          const focusableElements = dialogRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          );
+
+          if (focusableElements.length === 0) return;
+
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
+          if (e.shiftKey) {
+            // Shift + Tab: wrap from first to last
+            if (document.activeElement === firstElement) {
+              e.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            // Tab: wrap from last to first
+            if (document.activeElement === lastElement) {
+              e.preventDefault();
+              firstElement.focus();
+            }
+          }
         }
       };
+
       window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
+
+      // Lock body scroll while modal is active
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        window.clearTimeout(timer);
+        window.removeEventListener("keydown", handleKeyDown);
+        document.body.style.overflow = originalOverflow;
+
+        // Restore focus to original element
+        if (previousActiveElementRef.current && typeof previousActiveElementRef.current.focus === "function") {
+          previousActiveElementRef.current.focus();
+        }
+      };
     }
   }, [isOpen, onCancel]);
 
@@ -46,7 +97,7 @@ export function ResetConfirmDialog({ isOpen, onConfirm, onCancel }: ResetConfirm
           type="button"
           className="modal-close"
           onClick={onCancel}
-          aria-label="ပိတ်မည်"
+          aria-label="အတည်ပြုချက် ပြတင်းပေါက် ပိတ်မည်"
         >
           <X size={18} aria-hidden="true" />
         </button>
@@ -67,6 +118,7 @@ export function ResetConfirmDialog({ isOpen, onConfirm, onCancel }: ResetConfirm
             className="secondary-btn"
             onClick={onCancel}
             ref={cancelButtonRef}
+            aria-label="မလုပ်တော့ပါ၊ မူလအတိုင်း ဆက်လက်ထားမည်"
           >
             မလုပ်တော့ပါ (Cancel)
           </button>
@@ -74,6 +126,7 @@ export function ResetConfirmDialog({ isOpen, onConfirm, onCancel }: ResetConfirm
             type="button"
             className="danger-btn"
             onClick={onConfirm}
+            aria-label="အတည်ပြုပါသည်၊ အစမှ ပြန်လည်စတင်မည်"
           >
             အစမှ ပြန်ထားမည် (Reset)
           </button>
@@ -82,3 +135,4 @@ export function ResetConfirmDialog({ isOpen, onConfirm, onCancel }: ResetConfirm
     </div>
   );
 }
+

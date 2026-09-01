@@ -32,6 +32,7 @@ export function TermTooltip({ termId, label, className = "" }: TermTooltipProps)
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
+        event.preventDefault();
         setIsOpen(false);
         triggerRef.current?.focus();
       }
@@ -57,7 +58,8 @@ export function TermTooltip({ termId, label, className = "" }: TermTooltipProps)
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
         aria-controls={tooltipId}
-        aria-label={`${termData.term} (${termData.myanmarTerm}) ၏ ရှင်းလင်းချက်ကို ကြည့်မည်`}
+        aria-haspopup="dialog"
+        aria-label={`${termData.term} (${termData.myanmarTerm}) အဓိပ္ပာယ် ရှင်းလင်းချက် ${isOpen ? 'ပိတ်မည်' : 'ကြည့်မည်'}`}
       >
         <HelpCircle size={14} aria-hidden="true" />
       </button>
@@ -68,7 +70,9 @@ export function TermTooltip({ termId, label, className = "" }: TermTooltipProps)
           ref={popoverRef}
           className="term-popover"
           role="dialog"
+          aria-modal="false"
           aria-labelledby={`${tooltipId}-title`}
+          aria-describedby={`${tooltipId}-desc`}
         >
           <div className="term-popover-header">
             <div>
@@ -78,13 +82,18 @@ export function TermTooltip({ termId, label, className = "" }: TermTooltipProps)
             <button
               type="button"
               className="term-popover-close"
-              onClick={() => setIsOpen(false)}
-              aria-label="ပိတ်မည်"
+              onClick={() => {
+                setIsOpen(false);
+                triggerRef.current?.focus();
+              }}
+              aria-label={`${termData.term} (${termData.myanmarTerm}) ရှင်းလင်းချက် ပိတ်မည်`}
             >
               <X size={14} aria-hidden="true" />
             </button>
           </div>
-          <p className="term-popover-desc">{termData.simpleExplanation}</p>
+          <p id={`${tooltipId}-desc`} className="term-popover-desc">
+            {termData.simpleExplanation}
+          </p>
           <div className="term-popover-example">
             <span className="example-badge">ဥပမာ</span>
             <small>{termData.example}</small>
@@ -94,3 +103,4 @@ export function TermTooltip({ termId, label, className = "" }: TermTooltipProps)
     </span>
   );
 }
+
