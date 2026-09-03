@@ -11,8 +11,12 @@ import {
   TrendingUp,
   BookOpen,
   ChevronRight,
+  ExternalLink,
+  Headphones,
 } from "lucide-react";
 import { UserProfileSync } from "./UserProfileSync";
+import { GEMINI_GEM_URL } from "../data/geminiGem";
+import { PODCAST_MP3_URL } from "../data/podcastData";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -93,6 +97,13 @@ export function Header() {
       badge: "အကြံပြုချက်",
     },
     {
+      href: "#podcast",
+      label: "Audio Podcast",
+      desc: "အသံဖိုင်ဖြင့် လေ့လာရန်နှင့် အနှစ်ချုပ်",
+      icon: Headphones,
+      badge: "MP3",
+    },
+    {
       href: "#workflow",
       label: "အဆင့် ၈ ဆင့် Workflow",
       desc: "ငွေကြေးစီမံမှု လုပ်ငန်းစဉ် အဆင့်ဆင့်",
@@ -145,8 +156,29 @@ export function Header() {
         ))}
       </nav>
 
-      {/* Header Actions: Sync & CTA Button */}
+      {/* Header Actions: Gemini Gem, Podcast, Sync & CTA Button */}
       <div className="header-actions">
+        <a
+          href="#podcast"
+          className="header-podcast-btn"
+          aria-label="MoneyWise Audio Podcast MP3 နားဆင်မည်"
+          title="MoneyWise Audio Podcast MP3 နားဆင်မည်"
+        >
+          <Headphones size={14} className="podcast-header-icon" aria-hidden="true" />
+          <span>Podcast</span>
+        </a>
+        <a
+          href={GEMINI_GEM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="header-gemini-btn"
+          aria-label="MoneyWise Gemini Gem - Website နှင့် Financial Literacy ကို AI ဖြင့် မေးမြန်းပါ (ဝင်းဒိုးအသစ်တွင် ဖွင့်မည်)"
+          title="MoneyWise Gemini Gem - Website နှင့် Financial Literacy ကို AI ဖြင့် မေးမြန်းပါ"
+        >
+          <Sparkles size={14} className="gemini-header-sparkle" aria-hidden="true" />
+          <span>Gemini Gem</span>
+          <ExternalLink size={12} className="gemini-header-ext" aria-hidden="true" />
+        </a>
         <UserProfileSync />
         <a className="header-cta" href="#guided" aria-label="15 မိနစ် လမ်းညွှန်သင်ယူမှု စတင်လေ့လာမည်">
           <Clock size={15} aria-hidden="true" />
@@ -223,6 +255,56 @@ export function Header() {
             <div className="drawer-user-section">
               <span className="drawer-section-label">အကောင့် & Cloud Sync</span>
               <UserProfileSync />
+            </div>
+
+            {/* Gemini Gem AI Callout */}
+            <div className="drawer-gemini-section">
+              <a
+                href={GEMINI_GEM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="drawer-gemini-card"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="MoneyWise Gemini Gem AI တွင် မေးမြန်းမည် (ဝင်းဒိုးအသစ်တွင် ဖွင့်မည်)"
+              >
+                <div className="drawer-gemini-top">
+                  <div className="drawer-gemini-icon" aria-hidden="true">
+                    <Sparkles size={18} />
+                  </div>
+                  <div className="drawer-gemini-info">
+                    <strong>MoneyWise Gemini Gem</strong>
+                    <span className="drawer-gemini-pill">Google AI</span>
+                  </div>
+                  <ExternalLink size={15} className="drawer-gemini-ext" aria-hidden="true" />
+                </div>
+                <p className="drawer-gemini-text">
+                  Website အကြောင်းနှင့် Financial Literacy သဘောတရားများကို AI ဖြင့် အပြန်အလှန် မေးမြန်းပါ
+                </p>
+              </a>
+            </div>
+
+            {/* Podcast MP3 Callout Card */}
+            <div className="drawer-podcast-section">
+              <a
+                href="#podcast"
+                className="drawer-podcast-card"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="MoneyWise Audio Podcast နားဆင်မည်"
+              >
+                <div className="drawer-podcast-top">
+                  <div className="drawer-podcast-icon" aria-hidden="true">
+                    <Headphones size={18} />
+                  </div>
+                  <div className="drawer-podcast-info">
+                    <strong>Audio Podcast (MP3)</strong>
+                    <span className="drawer-podcast-pill">နားဆင်ရန်</span>
+                  </div>
+                  <ChevronRight size={16} className="drawer-podcast-ext" aria-hidden="true" />
+                </div>
+                <p className="drawer-podcast-text">
+                  Website အကြောင်းအရာနှင့် Financial Literacy အနှစ်ချုပ်ကို အသံဖိုင်ဖြင့် လေ့လာပါ
+                </p>
+              </a>
             </div>
 
             {/* Navigation List Items */}

@@ -2,6 +2,7 @@ import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { calculateBudget, validateBudget } from "../src/utils/finance.ts";
 import { formatMMK, formatNumber, formatK } from "../src/utils/format.ts";
+import { PODCAST_MP3_URL, PODCAST_SUMMARY } from "../src/data/podcastData.ts";
 
 describe("Financial Utilities & Budget Calculations", () => {
   test("calculates standard budget correctly", () => {
@@ -143,3 +144,29 @@ describe("Format Utilities", () => {
     assert.equal(formatK(0), "0K");
   });
 });
+
+describe("Podcast Link & Summary Configuration", () => {
+  test("contains valid MP3 audio URL", () => {
+    assert.equal(
+      PODCAST_MP3_URL,
+      "https://startup-roadmap-media.komoe.org/money-wise.mp3"
+    );
+    assert.equal(PODCAST_MP3_URL.endsWith(".mp3"), true);
+  });
+
+  test("contains comprehensive summary and chapter outline", () => {
+    assert.ok(PODCAST_SUMMARY.title.length > 0);
+    assert.ok(PODCAST_SUMMARY.description.length > 0);
+    assert.equal(PODCAST_SUMMARY.chapters.length, 5);
+    assert.equal(PODCAST_SUMMARY.keyTakeaways.length, 4);
+
+    // Verify all chapters have necessary properties
+    PODCAST_SUMMARY.chapters.forEach((chapter) => {
+      assert.ok(chapter.id);
+      assert.ok(chapter.title);
+      assert.ok(chapter.myanmarTitle);
+      assert.ok(chapter.desc);
+    });
+  });
+});
+

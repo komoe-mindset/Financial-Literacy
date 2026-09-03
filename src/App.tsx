@@ -5,12 +5,14 @@ import { Header } from "./components/Header";
 import { HeroSection } from "./components/HeroSection";
 import { WhatYouWillLearn } from "./components/WhatYouWillLearn";
 import { WebsiteIntroduction } from "./components/WebsiteIntroduction";
+import { PodcastSection } from "./components/PodcastSection";
 import { MoneyWorkflow } from "./components/MoneyWorkflow";
 import { Heading } from "./components/Heading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/Tabs";
 import { RealWorldCase } from "./components/RealWorldCase";
 import { BeginnerGlossary } from "./components/BeginnerGlossary";
 import { Footer } from "./components/Footer";
+import { GeminiFloatingAssistant } from "./components/GeminiFloatingAssistant";
 
 // Lazy-load heavier components to optimize initial bundle size & FCP / LCP
 const GuidedLearningMode = lazy(() =>
@@ -82,6 +84,7 @@ export default function App() {
         </Suspense>
 
         <WebsiteIntroduction />
+        <PodcastSection />
         <MoneyWorkflow />
 
         <section className="learning-lab" id="practice" aria-labelledby="practice-title">
@@ -131,6 +134,7 @@ export default function App() {
         <RealWorldCase />
         <BeginnerGlossary />
         <Footer />
+        <GeminiFloatingAssistant />
       </main>
     </AuthProvider>
   );

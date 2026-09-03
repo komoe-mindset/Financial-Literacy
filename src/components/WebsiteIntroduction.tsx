@@ -1,3 +1,6 @@
+import { Sparkles, ExternalLink } from "lucide-react";
+import { GEMINI_GEM_URL, GEMINI_GEM_PROMPTS } from "../data/geminiGem";
+
 export function WebsiteIntroduction() {
   const audiences = [
     "လေ့လာသူ",
@@ -54,6 +57,59 @@ export function WebsiteIntroduction() {
             </div>
           </article>
         ))}
+      </div>
+
+      {/* Gemini Gem Interactive AI Assistant Card */}
+      <div className="gemini-gem-banner" role="region" aria-label="MoneyWise Gemini AI Gem အကြောင်း">
+        <div className="gemini-gem-banner-content">
+          <div className="gemini-gem-badge-row">
+            <span className="gemini-gem-pill">
+              <Sparkles size={13} className="gemini-sparkle-amber" aria-hidden="true" />
+              <span>Google Gemini Gem</span>
+            </span>
+            <span className="gemini-gem-free-tag">အခမဲ့ AI လမ်းညွှန်</span>
+          </div>
+
+          <h3 className="gemini-gem-heading">
+            နားမလည်တာရှိရင် MoneyWise Gemini Gem မှာ အချိန်မရွေး မေးပါ
+          </h3>
+          <p className="gemini-gem-desc">
+            ဒီ Website ရဲ့ <strong>Financial Literacy သဘောတရားများ</strong>၊ <strong>50/30/20 Budgeting စည်းမျဉ်း</strong>၊ <strong>အရေးပေါ်ရန်ပုံငွေ</strong>နဲ့ <strong>ငွေကြေး Workflow အဆင့် ၈ ဆင့်</strong>ကို Gemini AI Gem ထံတွင် မြန်မာဘာသာဖြင့် သင့်စိတ်ကြိုက် မေးခွန်းများ စိတ်တိုင်းကျ မေးမြန်းလေ့လာနိုင်ပါသည်။
+          </p>
+
+          <div className="gemini-prompt-chips" aria-label="နမူနာ မေးမြန်းနိုင်သော မေးခွန်းများ">
+            <span className="prompt-chip-lead">နမူနာ မေးခွန်းများ -</span>
+            {GEMINI_GEM_PROMPTS.map((prompt, idx) => (
+              <a
+                key={idx}
+                href={GEMINI_GEM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gemini-prompt-chip"
+                title="Gemini Gem တွင် ဤမေးခွန်းကို မေးမြန်းရန်"
+              >
+                <span>“{prompt}”</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="gemini-gem-banner-action">
+          <a
+            href={GEMINI_GEM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="gemini-gem-cta-btn"
+            id="gemini-gem-banner-link"
+          >
+            <Sparkles size={16} aria-hidden="true" />
+            <span>Gemini Gem တွင် စတင်မေးမည်</span>
+            <ExternalLink size={14} aria-hidden="true" />
+          </a>
+          <span className="gemini-gem-footnote">
+            Google Account ဖြင့် ချက်ချင်းအခမဲ့ အသုံးပြုနိုင်ပါသည်
+          </span>
+        </div>
       </div>
     </section>
   );

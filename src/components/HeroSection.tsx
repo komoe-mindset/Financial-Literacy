@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   Clock,
   Compass,
+  Headphones,
 } from "lucide-react";
 
 export function HeroSection() {
@@ -39,6 +40,14 @@ export function HeroSection() {
           </a>
 
           <div className="hero-secondary-row">
+            <a
+              className="hero-podcast-button"
+              href="#podcast"
+              aria-label="Website နှင့် Financial Literacy အကြောင်း Podcast MP3 နားဆင်မည်"
+            >
+              <Headphones size={15} aria-hidden="true" />
+              <span>Podcast နားဆင်မည်</span>
+            </a>
             <a
               className="secondary-button"
               href="#workflow"
