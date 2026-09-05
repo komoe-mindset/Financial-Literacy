@@ -9,17 +9,26 @@ export default defineConfig({
     port: 3000,
   },
   build: {
+    minify: "esbuild",
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
           if (id.includes("node_modules")) {
-            if (id.includes("firebase")) {
-              return "firebase";
+            if (id.includes("firebase") || id.includes("@firebase")) {
+              return "firebase-vendor";
             }
-            if (id.includes("react") || id.includes("react-dom") || id.includes("scheduler")) {
+            if (id.includes("lucide-react") || id.includes("icon")) {
+              return "icons-vendor";
+            }
+            if (
+              id.includes("react") ||
+              id.includes("react-dom") ||
+              id.includes("scheduler")
+            ) {
               return "react-vendor";
             }
-            if (id.includes("lucide-react") || id.includes("radix-ui") || id.includes("@radix-ui")) {
+            if (id.includes("radix-ui") || id.includes("@radix-ui")) {
               return "ui-vendor";
             }
             return "vendor";
@@ -27,6 +36,6 @@ export default defineConfig({
         },
       },
     },
-    chunkSizeWarningLimit: 800,
+    chunkSizeWarningLimit: 1000,
   },
 });

@@ -170,3 +170,110 @@ describe("Podcast Link & Summary Configuration", () => {
   });
 });
 
+describe("Accessibility (a11y) & Modal Standards", () => {
+  test("Modal component implements required ARIA and accessibility attributes", async () => {
+    const fs = await import("node:fs");
+    const modalContent = fs.readFileSync("src/components/Modal.tsx", "utf-8");
+
+    // Proper ARIA attributes
+    assert.ok(modalContent.includes('role={role}'), "Modal should bind role attribute");
+    assert.ok(modalContent.includes('aria-modal="true"'), "Modal must have aria-modal='true'");
+    assert.ok(modalContent.includes('ariaLabel = "AI Financial Assistant"'), "Modal default aria-label is AI Financial Assistant");
+    
+    // Focus trapping & Escape listener
+    assert.ok(modalContent.includes('Escape'), "Modal must handle Escape key");
+    assert.ok(modalContent.includes('Tab'), "Modal must handle Tab key for focus trapping");
+    assert.ok(modalContent.includes('shiftKey'), "Modal must handle Shift+Tab wrapping");
+    
+    // Focus restoration & scroll locking
+    assert.ok(modalContent.includes('previousActiveElementRef'), "Modal must restore focus upon closing");
+    assert.ok(modalContent.includes('overflow = "hidden"'), "Modal must lock body scroll");
+
+    // Clean lazy loading
+    assert.ok(modalContent.includes('export default Modal'), "Modal must support default export for clean lazy loading");
+  });
+
+  test("GeminiFloatingAssistant implements strict Lighthouse a11y standards", async () => {
+    const fs = await import("node:fs");
+    const assistantContent = fs.readFileSync("src/components/GeminiFloatingAssistant.tsx", "utf-8");
+
+    // Proper ARIA attributes: role='dialog', aria-modal='true', aria-label='AI Financial Assistant'
+    assert.ok(assistantContent.includes('role="dialog"'), "Assistant dialog must have role='dialog'");
+    assert.ok(assistantContent.includes('aria-modal="true"'), "Assistant dialog must have aria-modal='true'");
+    assert.ok(assistantContent.includes('aria-label="AI Financial Assistant"'), "Assistant dialog must have aria-label='AI Financial Assistant'");
+
+    // Focus trapping & Escape key listener
+    assert.ok(assistantContent.includes('Escape'), "Assistant must handle Escape key");
+    assert.ok(assistantContent.includes('Tab'), "Assistant must handle Tab for focus trapping");
+    assert.ok(assistantContent.includes('shiftKey'), "Assistant must handle Shift+Tab backward focus trapping");
+    assert.ok(assistantContent.includes('triggerButtonRef.current?.focus()'), "Assistant must restore focus to trigger button");
+
+    // Interactive buttons descriptive aria-labels
+    assert.ok(assistantContent.includes('aria-label="AI Financial Assistant ဝင်းဒိုး ပိတ်မည်"'), "Close button must have descriptive aria-label");
+    assert.ok(assistantContent.includes('aria-label="AI Financial Assistant - Website နှင့် Financial Literacy ကို AI ဖြင့် မေးမြန်းရန် ဖွင့်ပါ"'), "Trigger button must have descriptive aria-label");
+
+    // Clean lazy loading support
+    assert.ok(assistantContent.includes('export default GeminiFloatingAssistant'), "Assistant must support default export for clean lazy loading");
+  });
+
+  test("App.tsx implements clean lazy loading for GeminiFloatingAssistant to protect FCP", async () => {
+    const fs = await import("node:fs");
+    const appContent = fs.readFileSync("src/App.tsx", "utf-8");
+
+    // Lazy load check
+    assert.ok(
+      appContent.includes('const GeminiFloatingAssistant = lazy('),
+      "App.tsx must lazy-load GeminiFloatingAssistant to avoid blocking FCP"
+    );
+    assert.ok(
+      appContent.includes('<GeminiFloatingAssistant />') &&
+      appContent.includes('<Suspense fallback={null}>'),
+      "GeminiFloatingAssistant must be wrapped in Suspense"
+    );
+  });
+});
+
+describe("Firebase Modular SDK & Environment Variables Standards", () => {
+  test("firebase.ts imports only lightweight modular SDK functions", async () => {
+    const fs = await import("node:fs");
+    const firebaseFile = fs.readFileSync("src/services/firebase.ts", "utf-8");
+
+    // Must not use namespace or root package imports
+    assert.equal(firebaseFile.includes('import * as firebase'), false);
+    assert.equal(firebaseFile.includes('import firebase from'), false);
+    assert.equal(firebaseFile.includes('from "firebase";'), false);
+
+    // Must import granular modular functions
+    assert.ok(firebaseFile.includes('import {\n  initializeApp,') || firebaseFile.includes('initializeApp'));
+    assert.ok(firebaseFile.includes('getAuth'));
+    assert.ok(firebaseFile.includes('getFirestore') || firebaseFile.includes('initializeFirestore'));
+    assert.ok(firebaseFile.includes('type FirebaseOptions'));
+
+    // Must use import.meta.env with fallback types
+    assert.ok(firebaseFile.includes('import.meta.env.VITE_FIREBASE_API_KEY'));
+    assert.ok(firebaseFile.includes('import.meta.env.VITE_FIREBASE_PROJECT_ID'));
+    assert.ok(firebaseFile.includes('getEnvString'));
+  });
+
+  test("AuthContext.tsx imports only lightweight modular SDK functions", async () => {
+    const fs = await import("node:fs");
+    const authFile = fs.readFileSync("src/AuthContext.tsx", "utf-8");
+
+    // Must not use namespace or root package imports
+    assert.equal(authFile.includes('import * as firebase'), false);
+    assert.equal(authFile.includes('import firebase from'), false);
+    assert.equal(authFile.includes('from "firebase";'), false);
+
+    // Must import specific modular functions from "firebase/auth"
+    assert.ok(authFile.includes('onAuthStateChanged'));
+    assert.ok(authFile.includes('signInWithPopup'));
+    assert.ok(authFile.includes('signInAnonymously'));
+    assert.ok(authFile.includes('updateProfile'));
+    assert.ok(authFile.includes('linkWithPopup'));
+    assert.ok(authFile.includes('signOut'));
+    assert.ok(authFile.includes('from "firebase/auth"'));
+  });
+});
+
+
+

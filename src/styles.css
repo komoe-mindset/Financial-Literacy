@@ -4968,6 +4968,39 @@ footer .brand small {
   line-height: 1.45;
 }
 
+.gemini-bubble-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.gemini-bubble-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: var(--teal, #0d706f);
+  color: #ffffff !important;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(13, 112, 111, 0.25);
+}
+
+.gemini-bubble-action-btn:hover {
+  background: #09504f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(13, 112, 111, 0.35);
+}
+
+.gemini-bubble-action-btn:focus-visible {
+  outline: 2px solid var(--teal, #0d706f);
+  outline-offset: 2px;
+}
+
 .gemini-bubble-beak {
   position: absolute;
   bottom: -7px;

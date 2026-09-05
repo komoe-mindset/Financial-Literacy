@@ -29,15 +29,30 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [submitting, setSubmitting] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
 
   // Initialize input with current displayName if any
   useEffect(() => {
     if (isOpen) {
+      previousActiveElementRef.current = document.activeElement as HTMLElement | null;
       setNicknameInput(displayName && displayName !== "ဧည့်သည်" ? displayName : "");
       const timer = window.setTimeout(() => {
         inputRef.current?.focus();
       }, 50);
-      return () => window.clearTimeout(timer);
+
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        window.clearTimeout(timer);
+        document.body.style.overflow = originalOverflow;
+        if (
+          previousActiveElementRef.current &&
+          typeof previousActiveElementRef.current.focus === "function"
+        ) {
+          previousActiveElementRef.current.focus();
+        }
+      };
     }
   }, [isOpen, displayName]);
 
@@ -181,6 +196,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               type="submit"
               className="auth-primary-btn guest-btn-action"
               disabled={submitting || loading}
+              aria-label="ဧည့်သည်အဖြစ် စတင်လေ့လာမည်"
             >
               {submitting ? (
                 <>
@@ -208,6 +224,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               className="auth-google-btn"
               onClick={handleGoogleClick}
               disabled={submitting || loading}
+              aria-label="Google အကောင့်ဖြင့် ဝင်မည်"
             >
               <svg className="google-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
                 <path

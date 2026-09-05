@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, lazy, Suspense } from "react";
 import {
   CloudCheck,
   User as UserIcon,
@@ -12,7 +12,12 @@ import {
   Edit3,
 } from "lucide-react";
 import { useAuth } from "../AuthContext";
-import { AuthModal } from "./AuthModal";
+
+const AuthModal = lazy(() =>
+  import("./AuthModal").then((module) => ({
+    default: module.AuthModal,
+  }))
+);
 
 export function UserProfileSync() {
   const {
@@ -322,8 +327,12 @@ export function UserProfileSync() {
         )}
       </div>
 
-      {/* Auth Modal component for Nickname input & Google Sign-in */}
-      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
+      {/* Auth Modal component for Nickname input & Google Sign-in (Lazy Loaded) */}
+      {isAuthModalOpen && (
+        <Suspense fallback={null}>
+          <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
+        </Suspense>
+      )}
     </>
   );
 }

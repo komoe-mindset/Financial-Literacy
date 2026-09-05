@@ -1,4 +1,10 @@
-import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
+import {
+  initializeApp,
+  getApps,
+  getApp,
+  type FirebaseApp,
+  type FirebaseOptions,
+} from "firebase/app";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -14,17 +20,24 @@ import {
   getDocFromServer,
 } from "firebase/firestore";
 
-const apiKey = (import.meta.env.VITE_FIREBASE_API_KEY || "").trim();
-const projectId = (import.meta.env.VITE_FIREBASE_PROJECT_ID || "").trim();
+/**
+ * Safely retrieve Vite client environment variables with guaranteed string fallback types.
+ */
+const getEnvString = (value: string | undefined, fallback: string = ""): string => {
+  return (typeof value === "string" ? value : fallback).trim();
+};
 
-const firebaseConfig = {
+const apiKey: string = getEnvString(import.meta.env.VITE_FIREBASE_API_KEY);
+const projectId: string = getEnvString(import.meta.env.VITE_FIREBASE_PROJECT_ID);
+
+const firebaseConfig: FirebaseOptions = {
   apiKey,
-  authDomain: (import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "").trim(),
+  authDomain: getEnvString(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN),
   projectId,
-  storageBucket: (import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "").trim(),
-  messagingSenderId: (import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "").trim(),
-  appId: (import.meta.env.VITE_FIREBASE_APP_ID || "").trim(),
-  measurementId: (import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "").trim(),
+  storageBucket: getEnvString(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET),
+  messagingSenderId: getEnvString(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID),
+  appId: getEnvString(import.meta.env.VITE_FIREBASE_APP_ID),
+  measurementId: getEnvString(import.meta.env.VITE_FIREBASE_MEASUREMENT_ID),
 };
 
 export const isFirebaseConfigured: boolean = Boolean(

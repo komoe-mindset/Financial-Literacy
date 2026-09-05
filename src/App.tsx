@@ -12,9 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/Tabs";
 import { RealWorldCase } from "./components/RealWorldCase";
 import { BeginnerGlossary } from "./components/BeginnerGlossary";
 import { Footer } from "./components/Footer";
-import { GeminiFloatingAssistant } from "./components/GeminiFloatingAssistant";
 
-// Lazy-load heavier components to optimize initial bundle size & FCP / LCP
+// Lazy-load heavier components & floating assistant to optimize initial bundle size & FCP / LCP
+const GeminiFloatingAssistant = lazy(() =>
+  import("./components/GeminiFloatingAssistant").then((module) => ({
+    default: module.GeminiFloatingAssistant,
+  }))
+);
+
 const GuidedLearningMode = lazy(() =>
   import("./components/GuidedLearningMode").then((module) => ({
     default: module.GuidedLearningMode,
@@ -134,7 +139,9 @@ export default function App() {
         <RealWorldCase />
         <BeginnerGlossary />
         <Footer />
-        <GeminiFloatingAssistant />
+        <Suspense fallback={null}>
+          <GeminiFloatingAssistant />
+        </Suspense>
       </main>
     </AuthProvider>
   );
